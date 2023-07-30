@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, User, signOut } from 'firebase/auth'
+import {getFirestore} from 'firebase/firestore'
 import Constants from 'expo-constants';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -19,7 +20,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const firebaseDB = getFirestore(app);
 
+// Firebase functions
 export function useAuthentication() {
   const [user, setUser] = useState<User>();
 
