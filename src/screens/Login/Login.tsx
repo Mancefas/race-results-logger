@@ -1,8 +1,31 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Icon from 'react-native-paper/lib/typescript/src/components/Icon';
 import { Text, TextInput, Button } from 'react-native-paper';
+import { signInWithEmailAndPassword  } from 'firebase/auth'
+import { auth } from '../../config/firebase';
 
-const Login = () => {
+const Login = () => {  
+
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('')
+  const [error, setError] = useState<string>('')
+
+  const handleLogin = async () => {
+    try {
+     await signInWithEmailAndPassword(auth, email, password )
+     setError('')
+    } catch (error: any) { // pakeisti i kita type
+       if(error.message.includes('auth/user-not-found')){
+          setError('no user')
+       } else if(error.message.includes('auth/wrong-password')) {
+        setError('wrong password')
+       } else {
+        setError('error')
+        console.error(error)
+       }        
+    }
+
+  }
 
     return (
         <View style={styles.container}>
@@ -11,20 +34,23 @@ const Login = () => {
             <TextInput
             style={styles.inputEmail}
             label="Email"
-            value={''}
             mode='outlined'
+            value={email}
+            onChangeText={setEmail}
              />
             <TextInput
             label="Password"
             style={styles.inputEmail}
-            value={''}
+            value={password}
+            onChangeText={setPassword}
             secureTextEntry 
             mode='outlined'
              />
+             {error && <Text style={styles.errorMessage}>{error}</Text>}
             <Button
              mode="contained"
              style={styles.inputButton}
-            
+            onPress={handleLogin }
              >
               PRISIJUNGTI
               </Button>
@@ -52,5 +78,10 @@ const styles = StyleSheet.create({
     },
     inputButton: {
       borderRadius:4
+    },
+    errorMessage: {
+      color:'red',
+      marginVertical: 10,
+      textAlign:'center'
     }
   });

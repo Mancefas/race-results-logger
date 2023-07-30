@@ -7,13 +7,16 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint" : "eslint ."
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
+    "dotenv": "^16.3.1",
     "expo": "~48.0.18",
+    "expo-constants": "~14.2.1",
     "expo-status-bar": "~1.4.4",
+    "firebase": "^10.1.0",
     "react": "18.2.0",
     "react-native": "0.71.8",
     "react-native-paper": "^5.9.1",
