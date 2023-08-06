@@ -1,32 +1,26 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import Constants from 'expo-constants';
-import { doc, updateDoc } from 'firebase/firestore';
-import { firebaseDB } from '../../config/firebase';
-
 import { Avatar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../App';
+import {
+    racersWithoutFinishTime,
+    handleFinishingTime,
+} from '../../store/slices/racersSlice';
 
 const EndTime = () => {
-    const users = Array.from({ length: 15 }, (_, index) =>
-        (index + 1).toString(),
-    );
-    const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+    const racers = useSelector(racersWithoutFinishTime);
+    const dispatch: AppDispatch = useDispatch();
 
-    const handleFinishingTime = async (userNr: string) => {
-        try {
-            await updateDoc(doc(firebaseDB, dbName, userNr), {
-                finishingTime: Date.now(),
-            });
-        } catch (error) {
-            console.log(error);
-        }
+    const handlePress = (userNr: string) => {
+        dispatch(handleFinishingTime(userNr));
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.gridContainer}>
-                {users.map((userNr) => (
+                {racers.map((userNr) => (
                     <View key={userNr} style={styles.finishingGridItem}>
-                        <Pressable onPress={() => handleFinishingTime(userNr)}>
+                        <Pressable onPress={() => handlePress(userNr)}>
                             <Avatar.Text size={70} label={userNr} />
                         </Pressable>
                     </View>

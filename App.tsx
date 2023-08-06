@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -17,6 +16,8 @@ const store = configureStore({
         racers: racerReducer,
     },
 });
+
+export type AppDispatch = typeof store.dispatch;
 
 export default function App() {
     const { user } = useAuthentication();

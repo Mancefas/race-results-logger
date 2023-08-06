@@ -4,7 +4,7 @@ import {
     createSelector,
 } from '@reduxjs/toolkit';
 import Constants from 'expo-constants';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, updateDoc, doc } from 'firebase/firestore';
 import RootState from '../../types/types';
 import { firebaseDB } from '../../config/firebase';
 
@@ -23,7 +23,58 @@ export const fetchRacers = createAsyncThunk('racers/fetchRacers', async () => {
     return dataToArrayOfRacers;
 });
 
-// export const selectRacersWithoutStartTime = (state) => state.racers.value;
+// Async thunk for add the starting time in Firebase
+export const handleStartingTime = createAsyncThunk(
+    'racers/updateStartingTime',
+    async (userNr: string) => {
+        const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+        const startingTime = Date.now(); // Generate the timestamp dynamically
+        try {
+            await updateDoc(doc(firebaseDB, dbName, userNr), {
+                startingTime,
+            });
+            return { userNr, startingTime }; // Return both userNr and startingTime
+        } catch (error) {
+            throw new Error('Failed to update starting time.');
+        }
+    },
+);
+
+// Async thunk for add the finishing time in Firebase
+export const handleFinishingTime = createAsyncThunk(
+    'racers/updateFinishingTime',
+    async (userNr: string) => {
+        const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+        const finishingTime = Date.now(); // Generate the timestamp dynamically
+        try {
+            await updateDoc(doc(firebaseDB, dbName, userNr), {
+                finishingTime,
+            });
+            return { userNr, finishingTime }; // Return both userNr and finishingTime
+        } catch (error) {
+            throw new Error('Failed to update finishing time.');
+        }
+    },
+);
+
+export const selectRacers = (state: RootState) => state.racers.value;
+
+export const selectRacersWithoutStartTime = createSelector(
+    selectRacers,
+    (racers) =>
+        racers
+            .filter((racer) => racer.startingTime === null)
+            .map((racer) => racer.id),
+);
+
+export const racersWithoutFinishTime = createSelector(selectRacers, (racers) =>
+    racers
+        .filter(
+            (racer) =>
+                racer.startingTime !== null && racer.finishingTime === null,
+        )!
+        .map((racer) => racer.id),
+);
 
 export const racersSlice = createSlice({
     name: 'racers',
@@ -36,8 +87,8 @@ export const racersSlice = createSlice({
                 bicycle: '',
                 group: '',
                 name: [],
-                startingTime: null,
-                finishingTime: null,
+                startingTime: null as number | null,
+                finishingTime: null as number | null,
             },
         ],
     },
@@ -55,6 +106,44 @@ export const racersSlice = createSlice({
                 state.value = action.payload;
             })
             .addCase(fetchRacers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'An error occurred';
+            })
+            // Handle adding Starting time
+            .addCase(handleStartingTime.pending, (state) => {
+                state.loading = true;
+                state.error = '';
+            })
+            .addCase(handleStartingTime.fulfilled, (state, action) => {
+                state.loading = false;
+                const { userNr, startingTime } = action.payload;
+                const racerToUpdate = state.value.find(
+                    (racer) => racer.id === userNr,
+                );
+                if (racerToUpdate) {
+                    racerToUpdate.startingTime = startingTime;
+                }
+            })
+            .addCase(handleStartingTime.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'An error occurred';
+            })
+            // Handle adding finishing time
+            .addCase(handleFinishingTime.pending, (state) => {
+                state.loading = true;
+                state.error = '';
+            })
+            .addCase(handleFinishingTime.fulfilled, (state, action) => {
+                state.loading = false;
+                const { userNr, finishingTime } = action.payload;
+                const racerToUpdate = state.value.find(
+                    (racer) => racer.id === userNr,
+                );
+                if (racerToUpdate) {
+                    racerToUpdate.finishingTime = finishingTime;
+                }
+            })
+            .addCase(handleFinishingTime.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'An error occurred';
             });

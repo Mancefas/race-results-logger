@@ -1,32 +1,26 @@
 import { StyleSheet, View, Pressable } from 'react-native';
-import Constants from 'expo-constants';
-import { doc, updateDoc } from 'firebase/firestore';
-import { firebaseDB } from '../../config/firebase';
-
 import { Avatar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux/';
+import {
+    selectRacersWithoutStartTime,
+    handleStartingTime,
+} from '../../store/slices/racersSlice';
+import type { AppDispatch } from '../../../App';
 
 const StartTime = () => {
-    const users = Array.from({ length: 25 }, (_, index) =>
-        (index + 1).toString(),
-    );
-    const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+    const racersToStart = useSelector(selectRacersWithoutStartTime);
+    const dispatch: AppDispatch = useDispatch();
 
-    const handleStartingTime = async (userNr: string) => {
-        try {
-            await updateDoc(doc(firebaseDB, dbName, userNr), {
-                startingTime: Date.now(),
-            });
-        } catch (error) {
-            console.log(error);
-        }
+    const handlePress = (userNr: string) => {
+        dispatch(handleStartingTime(userNr));
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.gridContainer}>
-                {users.map((userNr) => (
+                {racersToStart.map((userNr) => (
                     <View key={userNr} style={styles.gridItem}>
-                        <Pressable onPress={() => handleStartingTime(userNr)}>
+                        <Pressable onPress={() => handlePress(userNr)}>
                             <Avatar.Text
                                 style={styles.startNrAvatar}
                                 size={70}
