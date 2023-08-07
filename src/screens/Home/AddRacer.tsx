@@ -1,58 +1,97 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, Button, Text, RadioButton } from 'react-native-paper';
+import { TextInput, Button, Text, SegmentedButtons } from 'react-native-paper';
 import Constants from 'expo-constants';
 import { doc, setDoc } from 'firebase/firestore';
 import { firebaseDB } from '../../config/firebase';
+import { useDispatch, useSelector } from 'react-redux/';
+import { AppDispatch } from '../../../App';
+import {
+    addRacerToFirebase,
+    fetchRacers,
+    selectRacers,
+    racersWithoutStartTime,
+} from '../../store/slices/racersSlice';
 
 const AddRacer = () => {
-    const [name, setName] = useState<string>('');
+    const [fName, setFName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
-    const [startNr, setStartNr] = useState<string>('');
+    const [id, setId] = useState<string>('');
     const [bicycle, setBicycle] = useState<string>('');
     const [group, setGroup] = useState<string>('');
 
     const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+    const dispatch: AppDispatch = useDispatch();
 
-    const bicycleTypes = ['mtb', 'gravel'];
-    const racingGroups = ['M', 'M40', 'W'];
+    const bicycleTypes = [
+        {
+            value: 'mtb',
+            label: 'mtb',
+        },
+        {
+            value: 'gravel',
+            label: 'gravel',
+        },
+    ];
+
+    const racingGroups = [
+        {
+            value: 'M',
+            label: 'M',
+        },
+        {
+            value: 'M40',
+            label: 'M40',
+        },
+        {
+            value: 'W',
+            label: 'W',
+        },
+    ];
 
     const handleSubmitRacer = async () => {
-        try {
-            await setDoc(doc(firebaseDB, dbName, startNr), {
-                bicycle: bicycle,
-                group: group,
-                name: [name, surname],
-            });
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setName('');
-            setSurname('');
-            setStartNr('');
-            setBicycle('');
-            setGroup('');
+        if (hasAllInputs) {
+            try {
+                const racerData = {
+                    id,
+                    bicycle,
+                    group,
+                    name: [fName, surname],
+                };
+
+                await dispatch(addRacerToFirebase(racerData));
+
+                // Clear input fields after successful addition
+                setFName('');
+                setSurname('');
+                setId('');
+                setBicycle('');
+                setGroup('');
+
+                // dispatch(fetchRacers())
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
-    const hasAllInputs =
-        !!name && !!surname && !!startNr && !!bicycle && !!group;
+    const hasAllInputs = !!fName && !!surname && !!id && !!bicycle && !!group;
 
     return (
         <View style={styles.addRacerContainer}>
             <TextInput
                 style={styles.addRacerInput}
                 label="Starting nr"
-                value={startNr}
-                onChangeText={(number) => setStartNr(number)}
+                value={id}
+                onChangeText={(number) => setId(number)}
                 mode="outlined"
-                // keyboardType="numeric"
+                keyboardType="numeric"
             />
             <TextInput
                 style={styles.addRacerInput}
                 label="Name"
-                value={name}
-                onChangeText={setName}
+                value={fName}
+                onChangeText={setFName}
                 mode="outlined"
             />
 
@@ -65,42 +104,22 @@ const AddRacer = () => {
             />
 
             <View style={styles.addRacerChoosingContainer}>
-                <View>
+                <View style={styles.addRacerSelectContainer}>
                     <Text variant="displaySmall">Bicycle</Text>
-                    <RadioButton.Group
-                        onValueChange={(newValue) => setGroup(newValue)}
-                        value={group}
-                    >
-                        <View style={styles.selectButtonsGroup}>
-                            {bicycleTypes.map((bicycle, i) => (
-                                <View key={i}>
-                                    <Text style={{ textAlign: 'center' }}>
-                                        {bicycle.toUpperCase()}
-                                    </Text>
-                                    <RadioButton value={bicycle} />
-                                </View>
-                            ))}
-                        </View>
-                    </RadioButton.Group>
+                    <SegmentedButtons
+                        value={bicycle}
+                        onValueChange={setBicycle}
+                        buttons={bicycleTypes}
+                    />
                 </View>
 
-                <View>
+                <View style={styles.addRacerSelectContainer}>
                     <Text variant="displaySmall">Group</Text>
-                    <RadioButton.Group
-                        onValueChange={(newValue) => setBicycle(newValue)}
-                        value={bicycle}
-                    >
-                        <View style={styles.selectButtonsGroup}>
-                            {racingGroups.map((group, i) => (
-                                <View key={i}>
-                                    <Text style={{ textAlign: 'center' }}>
-                                        {group}
-                                    </Text>
-                                    <RadioButton value={group} />
-                                </View>
-                            ))}
-                        </View>
-                    </RadioButton.Group>
+                    <SegmentedButtons
+                        value={group}
+                        onValueChange={setGroup}
+                        buttons={racingGroups}
+                    />
                 </View>
                 <Button
                     onPress={handleSubmitRacer}
@@ -127,10 +146,10 @@ const styles = StyleSheet.create({
     },
     addRacerChoosingContainer: {
         width: '65%',
+        rowGap: 30,
     },
-    buttonsContainer: {
-        flexDirection: 'row',
-        alignSelf: 'center',
+    addRacerSelectContainer: {
+        rowGap: 10,
     },
     selectButtonsGroup: {
         flexDirection: 'row',
