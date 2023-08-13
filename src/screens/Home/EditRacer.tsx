@@ -13,9 +13,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux/';
 import { allRacers, handleEditRacer } from '../../store/slices/racersSlice';
 import { AppDispatch } from '../../../App';
+import RootState from '../../types/types';
 
 const EditRacer = () => {
     const racers = useSelector(allRacers);
+
     const [isModalVisible, setIsModalVisisble] = useState(false);
     const [fName, setFName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
@@ -51,14 +53,12 @@ const EditRacer = () => {
         },
     ];
 
-    type propsItems = {
-        id: string;
-        name: string[];
-        bicycle: string;
-        group: string;
-    };
-
-    const handleItemPress = ({ id, name, bicycle, group }: propsItems) => {
+    const handleItemPress = ({
+        id,
+        name,
+        bicycle,
+        group,
+    }: RootState['racers']['value'][0]) => {
         setIsModalVisisble(true);
         setFName(name[0]);
         setSurname(name[1]);
