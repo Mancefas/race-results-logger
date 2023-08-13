@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { StyleSheet, View, Pressable, Modal } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import {
     Avatar,
     TextInput,
     Button,
     Text,
     SegmentedButtons,
+    Portal,
+    Modal,
+    PaperProvider,
 } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux/';
 import { allRacers, handleEditRacer } from '../../store/slices/racersSlice';
@@ -81,7 +84,7 @@ const EditRacer = () => {
     };
 
     return (
-        <>
+        <PaperProvider>
             <View style={styles.container}>
                 <View style={styles.gridContainer}>
                     {racers.map((racer) => (
@@ -106,65 +109,60 @@ const EditRacer = () => {
                     ))}
                 </View>
             </View>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => setIsModalVisisble(false)}
-            >
-                <View style={styles.addRacerContainer}>
-                    <Button
-                        onPress={() => setIsModalVisisble(false)}
-                        style={{ alignSelf: 'flex-end' }}
-                    >
-                        X
-                    </Button>
-                    <Text>Starting nr</Text>
-                    <Text variant="displaySmall">{id}</Text>
-                    <TextInput
-                        style={styles.addRacerInput}
-                        label="Name"
-                        value={fName}
-                        onChangeText={setFName}
-                        mode="outlined"
-                    />
 
-                    <TextInput
-                        style={styles.addRacerInput}
-                        label="Surname"
-                        value={surname}
-                        onChangeText={setSurname}
-                        mode="outlined"
-                    />
+            <Portal>
+                <Modal
+                    visible={isModalVisible}
+                    onDismiss={() => setIsModalVisisble(false)}
+                >
+                    <View style={styles.addRacerContainer}>
+                        <Text>Starting nr</Text>
+                        <Text variant="displaySmall">{id}</Text>
+                        <TextInput
+                            style={styles.addRacerInput}
+                            label="Name"
+                            value={fName}
+                            onChangeText={setFName}
+                            mode="outlined"
+                        />
 
-                    <View style={styles.addRacerChoosingContainer}>
-                        <View style={styles.addRacerSelectContainer}>
-                            <Text variant="displaySmall">Bicycle</Text>
-                            <SegmentedButtons
-                                value={bicycle}
-                                onValueChange={setBicycle}
-                                buttons={bicycleTypes}
-                            />
+                        <TextInput
+                            style={styles.addRacerInput}
+                            label="Surname"
+                            value={surname}
+                            onChangeText={setSurname}
+                            mode="outlined"
+                        />
+
+                        <View style={styles.addRacerChoosingContainer}>
+                            <View style={styles.addRacerSelectContainer}>
+                                <Text variant="displaySmall">Bicycle</Text>
+                                <SegmentedButtons
+                                    value={bicycle}
+                                    onValueChange={setBicycle}
+                                    buttons={bicycleTypes}
+                                />
+                            </View>
+
+                            <View style={styles.addRacerSelectContainer}>
+                                <Text variant="displaySmall">Group</Text>
+                                <SegmentedButtons
+                                    value={group}
+                                    onValueChange={setGroup}
+                                    buttons={racingGroups}
+                                />
+                            </View>
+                            <Button
+                                onPress={handleSubmitEditedRacer}
+                                mode="contained"
+                            >
+                                Change
+                            </Button>
                         </View>
-
-                        <View style={styles.addRacerSelectContainer}>
-                            <Text variant="displaySmall">Group</Text>
-                            <SegmentedButtons
-                                value={group}
-                                onValueChange={setGroup}
-                                buttons={racingGroups}
-                            />
-                        </View>
-                        <Button
-                            onPress={handleSubmitEditedRacer}
-                            mode="contained"
-                        >
-                            Change
-                        </Button>
                     </View>
-                </View>
-            </Modal>
-        </>
+                </Modal>
+            </Portal>
+        </PaperProvider>
     );
 };
 
@@ -188,12 +186,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
     },
     addRacerContainer: {
-        height: '75%',
-        width: '85%',
+        width: '95%',
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop: 'auto',
+        paddingVertical: 15,
         rowGap: 15,
         backgroundColor: 'white',
     },
