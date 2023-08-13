@@ -10,7 +10,7 @@ import {
 import AddRacer from './AddRacer';
 import StartTime from './StartTime';
 import FinishTime from './FinishTime';
-import FixRacerTime from './FixRacerTime';
+import EditRacer from './EditRacer';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -51,8 +51,8 @@ const Home = () => {
                 }}
             />
             <Tab.Screen
-                name="Change racer time"
-                component={FixRacerTime}
+                name="Fix racer"
+                component={EditRacer}
                 options={{
                     tabBarIcon: 'tools',
                 }}

@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, Text, SegmentedButtons } from 'react-native-paper';
-import Constants from 'expo-constants';
-import { doc, setDoc } from 'firebase/firestore';
-import { firebaseDB } from '../../config/firebase';
-import { useDispatch, useSelector } from 'react-redux/';
+import { useDispatch } from 'react-redux/';
 import { AppDispatch } from '../../../App';
 import { addRacerToDatabase } from '../../store/slices/racersSlice';
 

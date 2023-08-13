@@ -80,15 +80,34 @@ export const handleFinishingTime = createAsyncThunk(
     },
 );
 
-export const selectRacers = (state: RootState) => state.racers.value;
+export const handleEditRacer = createAsyncThunk(
+    'racers/handleEditRacer',
+    async (racerData: RootState['racers']['value'][0]) => {
+        const updatedData = {
+            id: racerData.id,
+            group: racerData.group,
+            bicycle: racerData.bicycle,
+            name: racerData.name,
+        };
 
-export const racersWithoutStartTime = createSelector(selectRacers, (racers) =>
+        try {
+            await updateDoc(doc(firebaseDB, dbName, racerData.id), updatedData);
+            return updatedData;
+        } catch {
+            throw new Error('Failed to update finishing time.');
+        }
+    },
+);
+
+export const allRacers = (state: RootState) => state.racers.value;
+
+export const racersWithoutStartTime = createSelector(allRacers, (racers) =>
     racers
         .filter((racer) => racer.startingTime === null)
         .map((racer) => racer.id),
 );
 
-export const racersWithoutFinishTime = createSelector(selectRacers, (racers) =>
+export const racersWithoutFinishTime = createSelector(allRacers, (racers) =>
     racers
         .filter(
             (racer) =>
@@ -128,7 +147,6 @@ export const racersSlice = createSlice({
             })
             .addCase(addRacerToDatabase.fulfilled, (state, action) => {
                 state.loading = false;
-                console.log(state.value.length);
                 state.value.push(action.payload);
             })
             .addCase(addRacerToDatabase.rejected, (state, action) => {
@@ -170,6 +188,28 @@ export const racersSlice = createSlice({
                 }
             })
             .addCase(handleFinishingTime.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'An error occurred';
+            })
+            // Handle edit racer
+            .addCase(handleEditRacer.pending, (state) => {
+                state.loading = true;
+                state.error = '';
+            })
+            .addCase(handleEditRacer.fulfilled, (state, action) => {
+                state.loading = false;
+
+                const editedRacerToUpdate = state.value.find((racer) => {
+                    racer.id === action.payload.id;
+                });
+                if (editedRacerToUpdate) {
+                    editedRacerToUpdate.id = action.payload.id;
+                    editedRacerToUpdate.bicycle = action.payload.bicycle;
+                    editedRacerToUpdate.group = action.payload.group;
+                    editedRacerToUpdate.name = action.payload.name;
+                }
+            })
+            .addCase(handleEditRacer.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'An error occurred';
             });
