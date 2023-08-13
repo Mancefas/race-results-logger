@@ -3,8 +3,8 @@ interface Racer {
     bicycle: string;
     group: string;
     name: string[];
-    startingTime: null | number;
-    finishingTime: null | number;
+    startingTime?: null | number;
+    finishingTime?: null | number;
   }
   
   interface RootState {

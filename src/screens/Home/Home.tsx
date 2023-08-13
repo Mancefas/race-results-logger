@@ -1,8 +1,12 @@
 import { useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../../App';
-import { fetchRacers } from '../../store/slices/racersSlice';
+import {
+    fetchRacers,
+    racersWithoutStartTime,
+    racersWithoutFinishTime,
+} from '../../store/slices/racersSlice';
 import AddRacer from './AddRacer';
 import StartTime from './StartTime';
 import FinishTime from './FinishTime';
@@ -12,6 +16,8 @@ const Tab = createMaterialBottomTabNavigator();
 
 const Home = () => {
     const dispatch: AppDispatch = useDispatch();
+    const startingRacersCount = useSelector(racersWithoutStartTime).length;
+    const finishingRacersCount = useSelector(racersWithoutFinishTime).length;
 
     useEffect(() => {
         // Dispatch the fetchRacers action to fetch the data from Firebase
@@ -25,6 +31,7 @@ const Home = () => {
                 component={StartTime}
                 options={{
                     tabBarIcon: 'bike',
+                    tabBarBadge: startingRacersCount,
                 }}
             />
 
@@ -33,6 +40,7 @@ const Home = () => {
                 component={FinishTime}
                 options={{
                     tabBarIcon: 'flag-checkered',
+                    tabBarBadge: finishingRacersCount,
                 }}
             />
             <Tab.Screen

@@ -4,13 +4,20 @@ import {
     createSelector,
 } from '@reduxjs/toolkit';
 import Constants from 'expo-constants';
-import { getDocs, collection, updateDoc, doc } from 'firebase/firestore';
+import {
+    getDocs,
+    collection,
+    updateDoc,
+    doc,
+    setDoc,
+} from 'firebase/firestore';
 import RootState from '../../types/types';
 import { firebaseDB } from '../../config/firebase';
 
+const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+
 // Async thunk for fetching data from Firebase
 export const fetchRacers = createAsyncThunk('racers/fetchRacers', async () => {
-    const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
     const data = await getDocs(collection(firebaseDB, dbName));
     const dataToArrayOfRacers = data.docs.map((doc) => ({
         id: doc.id,
@@ -23,11 +30,28 @@ export const fetchRacers = createAsyncThunk('racers/fetchRacers', async () => {
     return dataToArrayOfRacers;
 });
 
+// Async thunk for adding a racer to Firebase
+export const addRacerToDatabase = createAsyncThunk(
+    'racers/addRacerToDatabase',
+    async (racerData: RootState['racers']['value'][0]) => {
+        const newRacer = {
+            ...racerData,
+            startingTime: null,
+            finishingTime: null,
+        };
+        try {
+            await setDoc(doc(firebaseDB, dbName, racerData.id), newRacer);
+            return newRacer; // Return the added racer data to update the Redux store
+        } catch (error) {
+            throw new Error('Failed to add the racer.');
+        }
+    },
+);
+
 // Async thunk for add the starting time in Firebase
 export const handleStartingTime = createAsyncThunk(
     'racers/updateStartingTime',
     async (userNr: string) => {
-        const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
         const startingTime = Date.now(); // Generate the timestamp dynamically
         try {
             await updateDoc(doc(firebaseDB, dbName, userNr), {
@@ -44,7 +68,6 @@ export const handleStartingTime = createAsyncThunk(
 export const handleFinishingTime = createAsyncThunk(
     'racers/updateFinishingTime',
     async (userNr: string) => {
-        const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
         const finishingTime = Date.now(); // Generate the timestamp dynamically
         try {
             await updateDoc(doc(firebaseDB, dbName, userNr), {
@@ -59,12 +82,10 @@ export const handleFinishingTime = createAsyncThunk(
 
 export const selectRacers = (state: RootState) => state.racers.value;
 
-export const selectRacersWithoutStartTime = createSelector(
-    selectRacers,
-    (racers) =>
-        racers
-            .filter((racer) => racer.startingTime === null)
-            .map((racer) => racer.id),
+export const racersWithoutStartTime = createSelector(selectRacers, (racers) =>
+    racers
+        .filter((racer) => racer.startingTime === null)
+        .map((racer) => racer.id),
 );
 
 export const racersWithoutFinishTime = createSelector(selectRacers, (racers) =>
@@ -81,16 +102,7 @@ export const racersSlice = createSlice({
     initialState: {
         loading: false,
         error: '',
-        value: [
-            {
-                id: '',
-                bicycle: '',
-                group: '',
-                name: [],
-                startingTime: null as number | null,
-                finishingTime: null as number | null,
-            },
-        ],
+        value: [] as RootState['racers']['value'],
     },
     reducers: {
         // Your other reducers, if any
@@ -106,6 +118,20 @@ export const racersSlice = createSlice({
                 state.value = action.payload;
             })
             .addCase(fetchRacers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'An error occurred';
+            })
+            // Handle adding a racer to Firebase
+            .addCase(addRacerToDatabase.pending, (state) => {
+                state.loading = true;
+                state.error = '';
+            })
+            .addCase(addRacerToDatabase.fulfilled, (state, action) => {
+                state.loading = false;
+                console.log(state.value.length);
+                state.value.push(action.payload);
+            })
+            .addCase(addRacerToDatabase.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'An error occurred';
             })

@@ -6,12 +6,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { firebaseDB } from '../../config/firebase';
 import { useDispatch, useSelector } from 'react-redux/';
 import { AppDispatch } from '../../../App';
-import {
-    addRacerToFirebase,
-    fetchRacers,
-    selectRacers,
-    racersWithoutStartTime,
-} from '../../store/slices/racersSlice';
+import { addRacerToDatabase } from '../../store/slices/racersSlice';
 
 const AddRacer = () => {
     const [fName, setFName] = useState<string>('');
@@ -20,7 +15,6 @@ const AddRacer = () => {
     const [bicycle, setBicycle] = useState<string>('');
     const [group, setGroup] = useState<string>('');
 
-    const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
     const dispatch: AppDispatch = useDispatch();
 
     const bicycleTypes = [
@@ -58,8 +52,7 @@ const AddRacer = () => {
                     group,
                     name: [fName, surname],
                 };
-
-                await dispatch(addRacerToFirebase(racerData));
+                await dispatch(addRacerToDatabase(racerData));
 
                 // Clear input fields after successful addition
                 setFName('');
@@ -67,8 +60,6 @@ const AddRacer = () => {
                 setId('');
                 setBicycle('');
                 setGroup('');
-
-                // dispatch(fetchRacers())
             } catch (error) {
                 console.log(error);
             }

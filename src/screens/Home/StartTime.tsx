@@ -2,13 +2,14 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux/';
 import {
-    selectRacersWithoutStartTime,
+    racersWithoutStartTime,
     handleStartingTime,
 } from '../../store/slices/racersSlice';
 import type { AppDispatch } from '../../../App';
 
 const StartTime = () => {
-    const racersToStart = useSelector(selectRacersWithoutStartTime);
+    const racersToStart = useSelector(racersWithoutStartTime);
+
     const dispatch: AppDispatch = useDispatch();
 
     const handlePress = (userNr: string) => {
