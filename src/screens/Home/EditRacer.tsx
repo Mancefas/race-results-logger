@@ -10,13 +10,16 @@ import {
     PaperProvider,
 } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux/';
-import { allRacers, handleEditRacer } from '../../store/slices/racersSlice';
+import {
+    sortedByIdAllRacers,
+    handleEditRacer,
+} from '../../store/slices/racersSlice';
 import { AppDispatch } from '../../../App';
 import RootState from '../../types/types';
 import { fixButtonColor } from '../../utils/constants/cssConstants';
 
 const EditRacer = () => {
-    const racers = useSelector(allRacers);
+    const racers = useSelector(sortedByIdAllRacers);
 
     const [isModalVisible, setIsModalVisisble] = useState(false);
     const [fName, setFName] = useState<string>('');

@@ -58,8 +58,10 @@ export const handleStartingTime = createAsyncThunk(
                 startingTime,
             });
             return { userNr, startingTime }; // Return both userNr and startingTime
-        } catch (error) {
-            throw new Error('Failed to update starting time.');
+        } catch (error: any) {
+            throw new Error(
+                'Failed to update starting time.' + '(' + error.message + ')',
+            );
         }
     },
 );
@@ -74,8 +76,10 @@ export const handleFinishingTime = createAsyncThunk(
                 finishingTime,
             });
             return { userNr, finishingTime }; // Return both userNr and finishingTime
-        } catch (error) {
-            throw new Error('Failed to update finishing time.');
+        } catch (error: any) {
+            throw new Error(
+                'Failed to update finishing time.' + '(' + error.message + ')',
+            );
         }
     },
 );
@@ -101,10 +105,15 @@ export const handleEditRacer = createAsyncThunk(
 
 export const allRacers = (state: RootState) => state.racers.value;
 
+export const sortedByIdAllRacers = createSelector(allRacers, (racers) =>
+    [...racers].sort((a, b) => +a.id - +b.id),
+);
+
 export const racersWithoutStartTime = createSelector(allRacers, (racers) =>
     racers
         .filter((racer) => racer.startingTime === null)
-        .map((racer) => racer.id),
+        .map((racer) => racer.id)
+        .sort((a, b) => +a - +b),
 );
 
 export const racersWithoutFinishTime = createSelector(allRacers, (racers) =>
@@ -112,8 +121,9 @@ export const racersWithoutFinishTime = createSelector(allRacers, (racers) =>
         .filter(
             (racer) =>
                 racer.startingTime !== null && racer.finishingTime === null,
-        )!
-        .map((racer) => racer.id),
+        )
+        .map((racer) => racer.id)
+        .sort((a, b) => +a - +b),
 );
 
 export const racersSlice = createSlice({
