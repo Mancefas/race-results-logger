@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
-    Avatar,
     TextInput,
     Button,
     Text,
@@ -14,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux/';
 import { allRacers, handleEditRacer } from '../../store/slices/racersSlice';
 import { AppDispatch } from '../../../App';
 import RootState from '../../types/types';
+import { fixButtonColor } from '../../utils/constants/cssConstants';
 
 const EditRacer = () => {
     const racers = useSelector(allRacers);
@@ -89,7 +89,7 @@ const EditRacer = () => {
                 <View style={styles.gridContainer}>
                     {racers.map((racer) => (
                         <View key={racer.id} style={styles.gridItem}>
-                            <Pressable
+                            <Button
                                 onPress={() =>
                                     handleItemPress({
                                         id: racer.id,
@@ -98,13 +98,12 @@ const EditRacer = () => {
                                         group: racer.group,
                                     })
                                 }
+                                mode="contained-tonal"
+                                buttonColor={fixButtonColor}
+                                style={{ paddingVertical: 15 }}
                             >
-                                <Avatar.Text
-                                    style={styles.startNrAvatar}
-                                    size={70}
-                                    label={racer.id}
-                                />
-                            </Pressable>
+                                {racer.id}
+                            </Button>
                         </View>
                     ))}
                 </View>
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
         flexBasis: '25%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
+        paddingVertical: 10,
     },
     startNrAvatar: {
         backgroundColor: 'red',

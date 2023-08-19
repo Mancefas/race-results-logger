@@ -1,11 +1,12 @@
-import { StyleSheet, View, Pressable } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux/';
 import {
     racersWithoutStartTime,
     handleStartingTime,
 } from '../../store/slices/racersSlice';
 import type { AppDispatch } from '../../../App';
+import { startButtonColor } from '../../utils/constants/cssConstants';
 
 const StartTime = () => {
     const racersToStart = useSelector(racersWithoutStartTime);
@@ -21,13 +22,15 @@ const StartTime = () => {
             <View style={styles.gridContainer}>
                 {racersToStart.map((userNr) => (
                     <View key={userNr} style={styles.gridItem}>
-                        <Pressable onPress={() => handlePress(userNr)}>
-                            <Avatar.Text
-                                style={styles.startNrAvatar}
-                                size={70}
-                                label={userNr}
-                            />
-                        </Pressable>
+                        <Button
+                            onPress={() => handlePress(userNr)}
+                            mode="contained-tonal"
+                            buttonColor={startButtonColor}
+                            textColor="white"
+                            style={{ paddingVertical: 15 }}
+                        >
+                            {userNr}
+                        </Button>
                     </View>
                 ))}
             </View>
@@ -49,10 +52,7 @@ const styles = StyleSheet.create({
         flexBasis: '25%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-    },
-    startNrAvatar: {
-        backgroundColor: 'green',
+        paddingVertical: 10,
     },
 });
 

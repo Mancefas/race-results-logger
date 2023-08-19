@@ -1,11 +1,12 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../App';
 import {
     racersWithoutFinishTime,
     handleFinishingTime,
 } from '../../store/slices/racersSlice';
+import { finishButtonColor } from '../../utils/constants/cssConstants';
 
 const EndTime = () => {
     const racers = useSelector(racersWithoutFinishTime);
@@ -20,9 +21,14 @@ const EndTime = () => {
             <View style={styles.gridContainer}>
                 {racers.map((userNr) => (
                     <View key={userNr} style={styles.finishingGridItem}>
-                        <Pressable onPress={() => handlePress(userNr)}>
-                            <Avatar.Text size={70} label={userNr} />
-                        </Pressable>
+                        <Button
+                            onPress={() => handlePress(userNr)}
+                            mode="contained-tonal"
+                            buttonColor={finishButtonColor}
+                            style={{ paddingVertical: 15 }}
+                        >
+                            {userNr}
+                        </Button>
                     </View>
                 ))}
             </View>
@@ -44,8 +50,7 @@ const styles = StyleSheet.create({
         flexBasis: '25%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-        color: 'green',
+        paddingVertical: 10,
     },
 });
 
