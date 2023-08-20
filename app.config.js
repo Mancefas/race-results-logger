@@ -35,5 +35,15 @@ export default {
             firebaseAppId: process.env.FIREBASE_APP_ID,
             firebaseDbCollectionName: process.env.FIRBASE_DB_COLLECTION_NAME,
         },
+        plugins: [
+            'expo-localization',
+            [
+                'expo-camera',
+                {
+                    cameraPermission:
+                        'Allow $(PRODUCT_NAME) to access your camera.',
+                },
+            ],
+        ],
     },
 };

@@ -7,10 +7,12 @@ import {
     racersWithoutStartTime,
     racersWithoutFinishTime,
 } from '../../store/slices/racersSlice';
+import { useTranslation } from 'react-i18next';
 import AddRacer from './AddRacer';
 import StartTime from './StartTime';
 import FinishTime from './FinishTime';
 import EditRacer from './EditRacer';
+import CameraFinish from './CameraFinish';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -18,6 +20,8 @@ const Home = () => {
     const dispatch: AppDispatch = useDispatch();
     const startingRacersCount = useSelector(racersWithoutStartTime).length;
     const finishingRacersCount = useSelector(racersWithoutFinishTime).length;
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         // Dispatch the fetchRacers action to fetch the data from Firebase
@@ -27,7 +31,7 @@ const Home = () => {
     return (
         <Tab.Navigator>
             <Tab.Screen
-                name="Start time"
+                name={t('home:startTime')}
                 component={StartTime}
                 options={{
                     tabBarIcon: 'bike',
@@ -36,7 +40,7 @@ const Home = () => {
             />
 
             <Tab.Screen
-                name="Finishing time"
+                name={t('home:finishTime')}
                 component={FinishTime}
                 options={{
                     tabBarIcon: 'flag-checkered',
@@ -44,17 +48,24 @@ const Home = () => {
                 }}
             />
             <Tab.Screen
-                name="Add racer"
+                name={t('home:addRacer')}
                 component={AddRacer}
                 options={{
                     tabBarIcon: 'account-plus',
                 }}
             />
             <Tab.Screen
-                name="Fix racer"
+                name={t('home:fixRacer')}
                 component={EditRacer}
                 options={{
                     tabBarIcon: 'tools',
+                }}
+            />
+            <Tab.Screen
+                name="Camera"
+                component={CameraFinish}
+                options={{
+                    tabBarIcon: 'camera',
                 }}
             />
         </Tab.Navigator>

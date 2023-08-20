@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, Text, SegmentedButtons } from 'react-native-paper';
 import { useDispatch } from 'react-redux/';
+import { useTranslation } from 'react-i18next';
 import { AppDispatch } from '../../../App';
 import { addRacerToDatabase } from '../../store/slices/racersSlice';
 
@@ -13,6 +14,8 @@ const AddRacer = () => {
     const [group, setGroup] = useState<string>('');
 
     const dispatch: AppDispatch = useDispatch();
+
+    const { t } = useTranslation();
 
     const bicycleTypes = [
         {
@@ -69,7 +72,7 @@ const AddRacer = () => {
         <View style={styles.addRacerContainer}>
             <TextInput
                 style={styles.addRacerInput}
-                label="Starting nr"
+                label={t('addRacer:startingNr')}
                 value={id}
                 onChangeText={(number) => setId(number)}
                 mode="outlined"
@@ -77,7 +80,7 @@ const AddRacer = () => {
             />
             <TextInput
                 style={styles.addRacerInput}
-                label="Name"
+                label={t('addRacer:name')}
                 value={fName}
                 onChangeText={setFName}
                 mode="outlined"
@@ -85,7 +88,7 @@ const AddRacer = () => {
 
             <TextInput
                 style={styles.addRacerInput}
-                label="Surname"
+                label={t('addRacer:surname')}
                 value={surname}
                 onChangeText={setSurname}
                 mode="outlined"
@@ -93,7 +96,7 @@ const AddRacer = () => {
 
             <View style={styles.addRacerChoosingContainer}>
                 <View style={styles.addRacerSelectContainer}>
-                    <Text variant="displaySmall">Bicycle</Text>
+                    <Text variant="displaySmall">{t('addRacer:bicycle')}</Text>
                     <SegmentedButtons
                         value={bicycle}
                         onValueChange={setBicycle}
@@ -102,7 +105,7 @@ const AddRacer = () => {
                 </View>
 
                 <View style={styles.addRacerSelectContainer}>
-                    <Text variant="displaySmall">Group</Text>
+                    <Text variant="displaySmall">{t('addRacer:group')}</Text>
                     <SegmentedButtons
                         value={group}
                         onValueChange={setGroup}
@@ -114,7 +117,7 @@ const AddRacer = () => {
                     mode="contained"
                     disabled={!hasAllInputs}
                 >
-                    Įvesti
+                    {t('addRacer:addButton')}
                 </Button>
             </View>
         </View>

@@ -14,6 +14,7 @@ import {
     sortedByIdAllRacers,
     handleEditRacer,
 } from '../../store/slices/racersSlice';
+import { useTranslation } from 'react-i18next';
 import { AppDispatch } from '../../../App';
 import RootState from '../../types/types';
 import { fixButtonColor } from '../../utils/constants/cssConstants';
@@ -29,6 +30,8 @@ const EditRacer = () => {
     const [group, setGroup] = useState<string>('');
 
     const dispatch: AppDispatch = useDispatch();
+
+    const { t } = useTranslation();
 
     const bicycleTypes = [
         {
@@ -118,11 +121,11 @@ const EditRacer = () => {
                     onDismiss={() => setIsModalVisisble(false)}
                 >
                     <View style={styles.addRacerContainer}>
-                        <Text>Starting nr</Text>
+                        <Text>{t('addRacer:startingNr')}</Text>
                         <Text variant="displaySmall">{id}</Text>
                         <TextInput
                             style={styles.addRacerInput}
-                            label="Name"
+                            label={t('addRacer:name')}
                             value={fName}
                             onChangeText={setFName}
                             mode="outlined"
@@ -130,7 +133,7 @@ const EditRacer = () => {
 
                         <TextInput
                             style={styles.addRacerInput}
-                            label="Surname"
+                            label={t('addRacer:surname')}
                             value={surname}
                             onChangeText={setSurname}
                             mode="outlined"
@@ -138,7 +141,9 @@ const EditRacer = () => {
 
                         <View style={styles.addRacerChoosingContainer}>
                             <View style={styles.addRacerSelectContainer}>
-                                <Text variant="displaySmall">Bicycle</Text>
+                                <Text variant="displaySmall">
+                                    {t('addRacer:bicycle')}
+                                </Text>
                                 <SegmentedButtons
                                     value={bicycle}
                                     onValueChange={setBicycle}
@@ -147,7 +152,9 @@ const EditRacer = () => {
                             </View>
 
                             <View style={styles.addRacerSelectContainer}>
-                                <Text variant="displaySmall">Group</Text>
+                                <Text variant="displaySmall">
+                                    {t('addRacer:group')}
+                                </Text>
                                 <SegmentedButtons
                                     value={group}
                                     onValueChange={setGroup}
@@ -158,7 +165,7 @@ const EditRacer = () => {
                                 onPress={handleSubmitEditedRacer}
                                 mode="contained"
                             >
-                                Change
+                                {t('addRacer:changeButton')}
                             </Button>
                         </View>
                     </View>
