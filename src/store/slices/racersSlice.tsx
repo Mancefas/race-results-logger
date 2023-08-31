@@ -3,7 +3,6 @@ import {
     createSlice,
     createSelector,
 } from '@reduxjs/toolkit';
-import Constants from 'expo-constants';
 import {
     getDocs,
     collection,
@@ -13,8 +12,10 @@ import {
 } from 'firebase/firestore';
 import RootState from '../../types/types';
 import { firebaseDB } from '../../config/firebase';
+import { FIRBASE_DB_COLLECTION_NAME } from '@env'
 
-const dbName = Constants.expoConfig?.extra?.firebaseDbCollectionName;
+//TO DO change later
+const dbName = FIRBASE_DB_COLLECTION_NAME;
 
 // Async thunk for fetching data from Firebase
 export const fetchRacers = createAsyncThunk('racers/fetchRacers', async () => {

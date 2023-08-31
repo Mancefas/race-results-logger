@@ -12,7 +12,6 @@ import AddRacer from './AddRacer';
 import StartTime from './StartTime';
 import FinishTime from './FinishTime';
 import EditRacer from './EditRacer';
-import CameraFinish from './CameraFinish';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -21,7 +20,7 @@ const Home = () => {
     const startingRacersCount = useSelector(racersWithoutStartTime).length;
     const finishingRacersCount = useSelector(racersWithoutFinishTime).length;
 
-    const { t } = useTranslation();
+    const { t } = useTranslation();    
 
     useEffect(() => {
         // Dispatch the fetchRacers action to fetch the data from Firebase
@@ -59,13 +58,6 @@ const Home = () => {
                 component={EditRacer}
                 options={{
                     tabBarIcon: 'tools',
-                }}
-            />
-            <Tab.Screen
-                name="Camera"
-                component={CameraFinish}
-                options={{
-                    tabBarIcon: 'camera',
                 }}
             />
         </Tab.Navigator>
