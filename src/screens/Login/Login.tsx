@@ -4,6 +4,7 @@ import { Text, TextInput, Button } from 'react-native-paper';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { useTranslation } from 'react-i18next';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
@@ -30,6 +31,7 @@ const Login = () => {
 
     return (
         <View style={styles.container}>
+            <Icon name="key" size={30} />
             <Text variant="displayMedium">{t('login:login')}</Text>
             <View style={styles.inputsContainer}>
                 <TextInput
