@@ -25,7 +25,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export default function App() {
     const { user } = useAuthentication();
-
+        
     const { t } = useTranslation();
 
     return (
