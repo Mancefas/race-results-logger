@@ -4,7 +4,7 @@ import { Text, TextInput, Button } from 'react-native-paper';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
@@ -31,7 +31,7 @@ const Login = () => {
 
     return (
         <View style={styles.container}>
-            <Icon name="key" size={30} />
+            <Icon name="login" size={30} style={styles.icon} />
             <Text variant="displayMedium">{t('login:login')}</Text>
             <View style={styles.inputsContainer}>
                 <TextInput
@@ -65,6 +65,9 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+    icon:{
+        color: '#000000',
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
